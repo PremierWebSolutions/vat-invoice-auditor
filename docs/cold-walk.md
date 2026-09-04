@@ -1,7 +1,7 @@
 # Cold-walk receipt
 
 **Date:** 4 September 2026
-**Setup:** a fresh Claude agent session with no project context, no web access, and no prior knowledge of this repo was pointed at the folder and told only what a stranger would be told: *"drop into this folder and Claude becomes a VAT invoice auditor — try it on one of the test invoices."* It was then asked to audit `fixtures/broken-simplified-over-limit.md` — a fixture deliberately **not** worked in examples.md. Nothing about the folder's structure, rules or reference cards was explained to it.
+**Setup:** a fresh Claude agent session with no project context, no web access, and no prior knowledge of this repo was pointed at the folder and told only what a stranger would be told: *drop into this folder and Claude becomes a VAT invoice auditor — try it on one of the test invoices.* It was then asked to audit `fixtures/broken-simplified-over-limit.md` — a fixture deliberately **not** worked in examples.md. Nothing about the folder's structure, rules or reference cards was explained to it.
 
 Disclosure: the stranger here is a fresh Claude session, not a human. The walk is reproducible by any human cold: clone the repo, open Claude Code in the folder, ask for that audit.
 
@@ -28,7 +28,7 @@ Verdict: **NON-COMPLIANT — invalid invoice** — invalid-invoice: 3 · defecti
 
 The planted defect was caught head-on: simplified format at £474.00 gross, over the £250 limit `[reg 16A; 700/21 §4.5]`, classified invalid-invoice exactly as the severity table requires. It then did something better than the answer sheet anticipated: having correctly escalated to the full checklist, it reported the knock-on failures a simplified-format document necessarily has at that value — no customer particulars `[reg 14(1)(e)]`, no VAT amount stated in sterling or at all `[reg 14(1)(l)]`, no net figures `[reg 14(1)(h); reg 14(1)(i)]`, no unit price `[reg 14(1)(m)]`, no date of issue `[reg 14(1)(c)]` — each located, cited, graded, with the reissue arithmetic derived (£395.00 net, £79.00 VAT). Every applicable check it passed was reported as a pass.
 
-`fixtures/EXPECTED.md` was corrected after this walk to acknowledge those knock-on findings — the cold session's reading was right and the answer sheet's "exactly one defect" framing was wrong for this fixture. That correction is this receipt's proof of honest testing: the test changed the repo, not the other way round.
+`fixtures/EXPECTED.md` was corrected after this walk to acknowledge those knock-on findings — the cold session's reading was right and the answer sheet's one-defect-per-fixture framing was wrong for this fixture. That correction is this receipt's proof of honest testing: the test changed the repo, not the other way round.
 
 ## Full transcript of the audit output
 

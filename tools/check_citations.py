@@ -1,13 +1,21 @@
 #!/usr/bin/env python3
-"""Validate every citation in the auditor's files against the text in reference/.
+"""Validate the auditor's files against the text in reference/.
 
-Runs offline, stdlib only, no API key. Exit 0 when every citation resolves;
-exit 1 with one line per failure otherwise.
+Two gates, both offline, stdlib only, no API key:
+
+1. Citations — every bracketed citation must resolve to a provision that
+   exists (and is not revoked) in reference/.
+2. Quotes — every double-quoted span in the auditor's own files must appear
+   verbatim (after whitespace/punctuation normalisation) in a fixture invoice
+   or in the shipped standard, so a fabricated quote fails mechanically no
+   matter how convincing it reads.
+
+Exit 0 when both gates pass; exit 1 with one line per failure otherwise.
 
 Usage:
     python3 tools/check_citations.py               # check the repo's own files
-    python3 tools/check_citations.py FILE [FILE…]  # check specific files
-    python3 tools/check_citations.py --self-test   # prove the checker fires
+    python3 tools/check_citations.py FILE [FILE…]  # citation-check specific files
+    python3 tools/check_citations.py --self-test   # prove both gates fire
 """
 import re
 import sys
@@ -27,6 +35,52 @@ NOTICE_PART = re.compile(r"700/21 §([0-9]+(?:\.[0-9]+)?)$")
 # standard itself and tools/testdata holds deliberately broken input.
 DEFAULT_FILES = (sorted(REPO.glob("*.md")) + [REPO / "fixtures" / "EXPECTED.md"]
                  + sorted((REPO / "docs").glob("*.md")))
+
+# Quote-grounding scope: the files whose double-quoted spans must all be
+# grounded. README/AGENTS quote coined instructions, so they stay out.
+QUOTE_FILES = ["identity.md", "rules.md", "examples.md", "docs/cold-walk.md"]
+QUOTE_SPAN = re.compile(r"\"([^\"]{4,160})\"")
+
+# What neither gate checks — printed with every result so a clean run never
+# overclaims.
+LIMITS = ("Not checked by this tool: paraphrases of the standard (only quoted "
+          "spans and citations), VAT number checksums, and whether a severity "
+          "call is legally right — those are the auditor's and the reviewer's job.")
+
+
+def normalise(text):
+    text = text.lower()
+    text = text.replace("’", "'").replace("‘", "'")
+    text = text.replace("“", '"').replace("”", '"')
+    text = text.replace("*", "").replace("`", "").replace(",", "")
+    return re.sub(r"\s+", " ", text)
+
+
+def quote_sources():
+    """The texts a quoted span may legitimately come from: the fixture
+    invoices and the shipped standard."""
+    sources = []
+    for path in sorted((REPO / "fixtures").glob("*.md")):
+        if path.name != "EXPECTED.md":
+            sources.append(normalise(path.read_text(encoding="utf-8")))
+    for path in sorted(REFERENCE.glob("*.md")):
+        sources.append(normalise(path.read_text(encoding="utf-8")))
+    return sources
+
+
+def check_quotes(path, sources):
+    errors = []
+    text = path.read_text(encoding="utf-8")
+    for m in QUOTE_SPAN.finditer(text):
+        span = m.group(1)
+        if any(normalise(span) in s for s in sources):
+            continue
+        line_no = text.count("\n", 0, m.start()) + 1
+        short = " ".join(span.split())
+        if len(short) > 60:
+            short = short[:57] + "..."
+        errors.append((path, line_no, f'ungrounded quote "{short}" — appears in no fixture and no reference/ card'))
+    return errors
 
 
 def reg_file(num):
@@ -109,13 +163,19 @@ def self_test():
     broken = REPO / "tools" / "testdata" / "broken-citations.md"
     failures = []
 
+    sources = quote_sources()
+
     clean_errors, clean_n = check_file(clean)
+    clean_errors.extend(check_quotes(clean, sources))
     if clean_errors:
         failures.append(f"clean file raised {len(clean_errors)} error(s): {clean_errors}")
     if clean_n == 0:
         failures.append("clean file contained no citations — self-test is vacuous")
+    if not QUOTE_SPAN.search(clean.read_text(encoding="utf-8")):
+        failures.append("clean file contained no quoted span — quote gate untested on honest prose")
 
     broken_errors, _ = check_file(broken)
+    broken_errors.extend(check_quotes(broken, sources))
     planted = [
         "reg 14 has no element (z)",
         "regulation 15 is not shipped",
@@ -123,6 +183,7 @@ def self_test():
         "reg 14(f) is revoked",
         "reg 14(k) is revoked",
         "malformed citation",
+        "ungrounded quote",
     ]
     messages = " | ".join(e[2] for e in broken_errors)
     for expect in planted:
@@ -134,23 +195,42 @@ def self_test():
         for f in failures:
             print(f"  ✗ {f}")
         return 1
-    print(f"SELF-TEST PASSED — clean file: {clean_n} citations, 0 errors; "
-          f"broken file: all {len(planted)} planted defects caught.")
+    print(f"SELF-TEST PASSED — clean file: {clean_n} citations and its quoted span, 0 errors; "
+          f"broken file: all {len(planted)} planted defect classes caught.")
     return 0
 
 
 def main(argv):
     if argv and argv[0] == "--self-test":
         return self_test()
+    explicit = bool(argv)
     files = [Path(a) for a in argv] if argv else [f for f in DEFAULT_FILES if f.is_file()]
     errors, total = run(files)
+    quotes = 0
+    if not explicit:  # quote-grounding is a repo invariant, not a per-file ask
+        sources = quote_sources()
+        for name in QUOTE_FILES:
+            path = REPO / name
+            if path.is_file():
+                errors.extend(check_quotes(path, sources))
+                quotes += len(QUOTE_SPAN.findall(path.read_text(encoding="utf-8")))
     if errors:
-        print(f"CITATION CHECK FAILED — {len(errors)} problem(s) in {total} citation(s):")
+        print(f"CHECK FAILED — {len(errors)} problem(s) ({total} citations, {quotes} quoted spans examined):")
         for path, line_no, msg in errors:
-            rel = path.relative_to(REPO) if path.is_relative_to(REPO) else path
+            try:
+                rel = path.relative_to(REPO)
+            except ValueError:
+                rel = path
             print(f"  ✗ {rel}:{line_no}  {msg}")
+        print(LIMITS)
         return 1
-    print(f"CITATION CHECK PASSED — {total} citations across {len(files)} file(s) all resolve against reference/.")
+    if explicit:
+        print(f"CITATION CHECK PASSED — {total} citations across {len(files)} file(s) all resolve against reference/.")
+    else:
+        print(f"CHECK PASSED — {total} citations resolve against reference/ and all "
+              f"{quotes} quoted spans in {len(QUOTE_FILES)} auditor file(s) are grounded "
+              f"in a fixture or the standard.")
+    print(LIMITS)
     return 0
 
 

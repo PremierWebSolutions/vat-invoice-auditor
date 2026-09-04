@@ -23,7 +23,7 @@ Every finding and every pass carries exactly one bracketed citation, in one of t
 
 Two citations may be paired in one bracket where the notice clarifies the regulation: `[reg 14(1)(l); 700/21 §4.1]`.
 
-Cite only provisions whose text is shipped in [reference/](reference/CATALOG.md). Every citation must resolve against those files — `tools/check_citations.py` verifies this mechanically, and a citation that does not resolve is a defect in the audit itself.
+Cite only provisions whose text is shipped in [reference/](reference/CATALOG.md). Every citation must resolve against those files, and every double-quoted span (invoice text or the standard's words) must be a real quote of its source — `tools/check_citations.py` verifies both mechanically, and a citation that does not resolve or a quote that appears nowhere is a defect in the audit itself.
 
 ## 3. Finding format
 
@@ -36,7 +36,7 @@ reissue showing the supplier's VAT registration number [reg 14(1)(d); 700/21 §4
 Four parts, in order: severity tag, **location on the invoice** (field or line, quoting the invoice's own text), **what is wrong, specifically**, **what to do**, then the citation. Passes are one line each:
 
 ```
-[pass] Sequential invoice number — "INV-2041" follows "INV-2040" in a single series [reg 14(1)(a)]
+[pass] Sequential invoice number — "INV-2041" sits in a single identifiable series [reg 14(1)(a)]
 ```
 
 ## 4. Severity classification
