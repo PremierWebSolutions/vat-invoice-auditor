@@ -1,0 +1,11 @@
+name: citation-check
+on: [push, pull_request]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Checker self-test (the checker must itself be provably alive)
+        run: python3 tools/check_citations.py --self-test
+      - name: Validate every citation against reference/
+        run: python3 tools/check_citations.py
