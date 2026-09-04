@@ -35,17 +35,17 @@ What comes back: a classification (full, simplified or retailer invoice), a chec
 | [fixtures/](fixtures/EXPECTED.md) | Ten synthetic test invoices (2 compliant, 8 broken) with an answer sheet |
 | [tools/check_citations.py](tools/check_citations.py) | Offline checker: every citation must resolve against reference/ |
 
-Do **not** load the whole folder into context for an audit. The auditor reads [reference/CATALOG.md](reference/CATALOG.md) and opens only the card the invoice in front of it needs; a full invoice needs reg 14 and one notice section, nothing more. [fixtures/EXPECTED.md](fixtures/EXPECTED.md) is the answer sheet, so keep it away from the auditor when testing it.
+Do **not** load the whole folder into context for an audit. The auditor reads [reference/CATALOG.md](reference/CATALOG.md) and opens only the card the invoice in front of it needs; a full invoice needs reg 14 and one notice section, nothing more. [fixtures/EXPECTED.md](fixtures/EXPECTED.md) is the answer sheet, so keep it away from the auditor when testing it — and if you set the folder up for real production use rather than testing, leave fixtures/ and docs/ out entirely: they exist to test and evidence the auditor, and an answer sheet in context makes every test vacuous.
 
-## Checking the citations
+## Checking the citations and quotes
 
-Every citation in this repo resolves mechanically against the shipped standard text. No network, no API key, Python 3 standard library only:
+Two mechanical gates guard the auditor's files. No network, no API key, Python 3 standard library only:
 
 ```bash
 python3 tools/check_citations.py
 ```
 
-Exit 0 means every citation in the auditor's files points at a provision that exists (and is not revoked) in reference/. A planted or corrupted citation fails the run with the file, line and reason. To prove the checker itself fires, run its self-test: a clean fixture must pass, and a deliberately broken one must trigger all six planted defects.
+Exit 0 means two things. Every citation points at a provision that exists (and is not revoked) in reference/. And every double-quoted span in the auditor's files appears verbatim in a fixture invoice or in the shipped standard — a fabricated quote fails mechanically no matter how convincing it reads. Either kind of plant fails the run with the file, line and reason, and the output states what the gates do not check. To prove the gates themselves fire, run the self-test: a clean fixture (citations plus an honest quote) must pass, and a deliberately broken one must trigger all seven planted defect classes.
 
 ```bash
 python3 tools/check_citations.py --self-test
