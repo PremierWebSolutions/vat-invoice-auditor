@@ -25,7 +25,8 @@ NOTICE_PART = re.compile(r"700/21 §([0-9]+(?:\.[0-9]+)?)$")
 
 # Default scan set: every auditor-authored markdown file. reference/ is the
 # standard itself and tools/testdata holds deliberately broken input.
-DEFAULT_FILES = sorted(REPO.glob("*.md")) + [REPO / "fixtures" / "EXPECTED.md"]
+DEFAULT_FILES = (sorted(REPO.glob("*.md")) + [REPO / "fixtures" / "EXPECTED.md"]
+                 + sorted((REPO / "docs").glob("*.md")))
 
 
 def reg_file(num):
