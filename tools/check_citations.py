@@ -33,12 +33,16 @@ NOTICE_PART = re.compile(r"700/21 §([0-9]+(?:\.[0-9]+)?)$")
 
 # Default scan set: every auditor-authored markdown file. reference/ is the
 # standard itself and tools/testdata holds deliberately broken input.
-DEFAULT_FILES = (sorted(REPO.glob("*.md")) + [REPO / "fixtures" / "EXPECTED.md"]
+# judge-answer-key/ is scanned by the checker (a script, not the auditor) but
+# lives outside fixtures/ so the auditor itself never has a folder-position
+# reason to open it — see judge-answer-key/EXPECTED.md and docs/decisions.md.
+DEFAULT_FILES = (sorted(REPO.glob("*.md")) + [REPO / "judge-answer-key" / "EXPECTED.md"]
                  + sorted((REPO / "docs").glob("*.md")))
 
 # Quote-grounding scope: the files whose double-quoted spans must all be
 # grounded. README/AGENTS quote coined instructions, so they stay out.
-QUOTE_FILES = ["identity.md", "rules.md", "examples.md", "docs/cold-walk.md"]
+QUOTE_FILES = ["identity.md", "rules.md", "examples.md", "docs/cold-walk.md",
+               "docs/refusal-under-pressure.md"]
 QUOTE_SPAN = re.compile(r"\"([^\"]{4,160})\"")
 
 # What neither gate checks — printed with every result so a clean run never
@@ -61,8 +65,7 @@ def quote_sources():
     invoices and the shipped standard."""
     sources = []
     for path in sorted((REPO / "fixtures").glob("*.md")):
-        if path.name != "EXPECTED.md":
-            sources.append(normalise(path.read_text(encoding="utf-8")))
+        sources.append(normalise(path.read_text(encoding="utf-8")))
     for path in sorted(REFERENCE.glob("*.md")):
         sources.append(normalise(path.read_text(encoding="utf-8")))
     return sources

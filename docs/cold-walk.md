@@ -9,7 +9,7 @@ Disclosure: the stranger here is a fresh Claude session, not a human. The walk i
 
 Files read, in order:
 
-1. `CLAUDE.md` — entry point; routed it to identity.md, rules.md and the catalog, and forbade EXPECTED.md
+1. `CLAUDE.md` — entry point; routed it to identity.md, rules.md and the catalog, and forbade `judge-answer-key/`
 2. `identity.md`
 3. `rules.md`
 4. `reference/CATALOG.md`
@@ -20,7 +20,7 @@ Files read, in order:
 9. `reference/vat-notice-700-21-invoicing.md` — for the clarifying notice citations
 10. `tools/check_citations.py` — ran it on its own audit output: 17/17 citations resolved
 
-Instructions it obeyed by **not** reading files: it left `fixtures/EXPECTED.md` unread (the answer sheet), left reg 13 and reg 16 unopened (not needed for these facts), left the other fixtures and `tools/testdata/` unread, and skipped `AGENTS.md` (engineering-only). Where it had not opened reg 16, it declined to cite reg 16(2) and said so — the cite-only-what-you-loaded guardrail holding under pressure.
+Instructions it obeyed by **not** reading files: it left `judge-answer-key/` unread (the answer sheet — at the time of this walk it still sat inside `fixtures/`; it has since been moved out to a sibling directory so the same discipline no longer depends on the instruction holding), left reg 13 and reg 16 unopened (not needed for these facts), left the other fixtures and `tools/testdata/` unread, and skipped `AGENTS.md` (engineering-only). Where it had not opened reg 16, it declined to cite reg 16(2) and said so — the cite-only-what-you-loaded guardrail holding under pressure.
 
 ## What it found
 
@@ -28,7 +28,7 @@ Verdict: **NON-COMPLIANT — invalid invoice** — invalid-invoice: 3 · defecti
 
 The planted defect was caught head-on: simplified format at £474.00 gross, over the £250 limit `[reg 16A; 700/21 §4.5]`, classified invalid-invoice exactly as the severity table requires. It then did something better than the answer sheet anticipated: having correctly escalated to the full checklist, it reported the knock-on failures a simplified-format document necessarily has at that value — no customer particulars `[reg 14(1)(e)]`, no VAT amount stated in sterling or at all `[reg 14(1)(l)]`, no net figures `[reg 14(1)(h); reg 14(1)(i)]`, no unit price `[reg 14(1)(m)]`, no date of issue `[reg 14(1)(c)]` — each located, cited, graded, with the reissue arithmetic derived (£395.00 net, £79.00 VAT). Every applicable check it passed was reported as a pass.
 
-`fixtures/EXPECTED.md` was corrected after this walk to acknowledge those knock-on findings — the cold session's reading was right and the answer sheet's one-defect-per-fixture framing was wrong for this fixture. That correction is this receipt's proof of honest testing: the test changed the repo, not the other way round.
+The answer sheet (now `judge-answer-key/EXPECTED.md`) was corrected after this walk to acknowledge those knock-on findings — the cold session's reading was right and the answer sheet's one-defect-per-fixture framing was wrong for this fixture. That correction is this receipt's proof of honest testing: the test changed the repo, not the other way round.
 
 ## Full transcript of the audit output
 
