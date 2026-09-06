@@ -68,6 +68,10 @@ Legislation and guidance change. Each file in [reference/](reference/CATALOG.md)
 - Every invoice in [fixtures/](fixtures/) is synthetic. No real business, person, VAT number or bank detail appears anywhere in this repository.
 - None of this is tax advice.
 
+## Receipts
+
+Two evidence files, both outside the drop-in folder: [docs/cold-walk.md](docs/cold-walk.md) is a fresh session using the auditor with no prior context, catching a planted defect and correcting the answer sheet when its own reading was better than mine. [docs/refusal-under-pressure.md](docs/refusal-under-pressure.md) is the same kind of session run through four disguised requests to skip the audit — a yes/no shortcut, a request to draft a replacement invoice, a request to certify compliance under deadline pressure, a request to skip straight to a ranking — with the full transcript published, not just the claim that it refused correctly.
+
 ## Licence
 
 The auditor's own files are MIT-licensed ([LICENSE](LICENSE)). The files in [reference/](reference/CATALOG.md) reproduce Crown copyright material — public sector information licensed under the [Open Government Licence v3.0](https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/), from [legislation.gov.uk](https://www.legislation.gov.uk/uksi/1995/2518) and [GOV.UK](https://www.gov.uk/guidance/record-keeping-for-vat-notice-70021), with source and access date stated in each file.
