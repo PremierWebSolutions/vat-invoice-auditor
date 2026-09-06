@@ -13,6 +13,7 @@ One line each, with the reason — so the next agent doesn't reverse a deliberat
 - The checker prints what it does not check with every result — a clean run that overclaims is how a gate teaches people to stop reading it.
 - Three severities graded by consequence (reissue / correct / note) — mirrors how an accountant triages invoice defects; names fixed in rules.md so audits stay comparable.
 - Full-invoice fixtures all exceed £250 gross — keeps the simplified-invoice relaxation from muddying which provision each fixture tests.
-- fixtures/EXPECTED.md is quarantined from the auditor (CLAUDE.md says never read it during an audit) — an answer sheet in context would make every test vacuous.
+- The answer key lives in judge-answer-key/, not fixtures/ (moved from fixtures/EXPECTED.md) — a CLAUDE.md instruction not to read a file is a request the auditor is trusted to honour, and past judging cycles have shown that trust misplaced; a sibling directory the drop-in never includes is a folder-position fact, not a request. See judge-answer-key/EXPECTED.md's own header.
+- Arithmetic in the fixtures and worked examples is verified by `tools/check_arithmetic.py`, not asserted by the model that wrote it — a script recomputing every total is the same enforcement-in-code discipline as the citation and quote gates, applied to the one other thing a plausible-sounding audit can get wrong silently.
 - VAT registration number checksum validation is out of scope, advisory only — the auditor checks invoicing particulars, not registration status.
 - Severity assignments were drafted by Claude; the judgment calls that need a practising accountant's eye are flagged in [review-notes.md](review-notes.md) for Andy's sign-off before submission, not silently resolved.

@@ -5,7 +5,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Checker self-test (the checker must itself be provably alive)
+      - name: Citation/quote checker self-test (must itself be provably alive)
         run: python3 tools/check_citations.py --self-test
-      - name: Validate every citation against reference/
+      - name: Validate every citation and quote against reference/ and fixtures/
         run: python3 tools/check_citations.py
+      - name: Arithmetic checker self-test (must itself be provably alive)
+        run: python3 tools/check_arithmetic.py --self-test
+      - name: Recompute every fixture's arithmetic from its own stated numbers
+        run: python3 tools/check_arithmetic.py

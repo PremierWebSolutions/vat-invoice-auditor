@@ -266,9 +266,10 @@ Paste the global rules above, then this, filled in:
 - `rules.md` — audit order, citation format, severity classification
 - `examples.md` — worked example audits with citations
 - `reference/` — the actual standard text, version-dated, under the Open Government Licence
-- `fixtures/` — synthetic test invoices (compliant and deliberately broken)
-- `tools/` — the offline citation checker and its own test fixtures
-- `docs/` — decisions log and cold-walk receipt
+- `fixtures/` — synthetic test invoices (compliant and deliberately broken), inputs only, no answers
+- `judge-answer-key/` — the fixture answer sheet, deliberately outside `fixtures/`; never referenced by the auditor's own files, never uploaded in a real drop-in
+- `tools/` — the offline citation/quote checker, the arithmetic checker, and their own test fixtures
+- `docs/` — decisions log, cold-walk receipt, refusal-under-pressure receipt, severity review notes
 
 ## Conventions
 - Every finding cites a specific provision using the citation format defined in `rules.md`; citation IDs must resolve against `reference/` (the checker enforces this).
@@ -285,5 +286,6 @@ Paste the global rules above, then this, filled in:
 - **All invoice data in this repo is synthetic.** No real client, supplier, VAT number, or address may ever appear — Andy is a practising accountant and this repo is public.
 - The competition auto-fails a `reference/` folder that does not contain the standard itself — a summary or a link is a fail. Keep the verbatim text in.
 - The README must NOT tell users to load every file into context — an earlier comp cycle failed entries for exactly that. Catalog first, load one card at a time.
-- Judges actively try to break entries (past cycles planted a bad citation and a fabricated quote) — `tools/check_citations.py` must fail loudly on any citation that doesn't resolve against `reference/` AND on any double-quoted span in identity/rules/examples/cold-walk that appears in no fixture and no reference card. Both gates must run offline with zero dependencies. Never put a quoted span in those files unless it is a verbatim quote of a fixture or the standard.
+- Judges actively try to break entries (past cycles planted a bad citation, a fabricated quote, a planted SHA, and a wrong line number) — `tools/check_citations.py` must fail loudly on any citation that doesn't resolve against `reference/` AND on any double-quoted span in identity/rules/examples/cold-walk that appears in no fixture and no reference card; `tools/check_arithmetic.py` must fail loudly on any fixture whose stated net/VAT/total figures don't reconcile against each other, with an unrecognised invoice shape treated as a hard failure, never a silent skip. All gates must run offline with zero dependencies. Never put a quoted span in those files unless it is a verbatim quote of a fixture or the standard, and never hand-adjust a fixture's arithmetic without re-running the checker.
 - VAT numbers in fixtures use obviously-fake but format-valid GB patterns; the checker does not validate VAT number checksums (out of scope, documented).
+- **Never move the answer key back into `fixtures/` or reference it from `identity.md`/`rules.md`/`examples.md`/`CLAUDE.md`.** Past judging cycles have shown that an instruction telling the auditor not to read a file is not trusted on its own — the fix is the file's folder position, not the wording of the warning. `judge-answer-key/` being a sibling of `fixtures/`, not a child, is the whole point.

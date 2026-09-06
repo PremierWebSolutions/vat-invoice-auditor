@@ -26,8 +26,16 @@ Three audits of invoices from [fixtures/](fixtures/), in the exact shape every a
 [pass] Cash discount — none offered ("No settlement discount offered"), so no rate is required [reg 14(1)(j)]
 [pass] Total VAT chargeable in sterling — "Total VAT: £242.80" [reg 14(1)(l)]
 [pass] Unit price — shown for every line [reg 14(1)(m)]
-[pass] Margin scheme, reverse charge, free zone references — none engaged on these facts [reg 14(1)(n); reg 14(1)(o); reg 14(1)(p)]
-[pass] Exempt/zero-rated distinction — not engaged: all supplies standard-rated [reg 14(4)]
+[pass] Margin scheme — ruled out: no antiques, art, collectors' items or tour-operator
+wording anywhere on the invoice, and the goods (door blanks, hinge sets) and labour are
+not margin-scheme categories [reg 14(1)(n)]
+[pass] Reverse charge — ruled out: the customer is charged VAT directly at "20%" on
+every line rather than the supplier shifting the liability, so the customer is not the
+person liable to account for the tax [reg 14(1)(o)]
+[pass] Free zone — ruled out: nothing on the invoice or in the facts places the supply
+within Item 1 of Group 22 of Schedule 8 (free zones) [reg 14(1)(p)]
+[pass] Exempt/zero-rated distinction — ruled out: every line is charged at the standard
+20% rate, so there is no exempt or zero-rated line to distinguish [reg 14(4)]
 ```
 
 **Arithmetic.** 6 × £85.00 = £510.00 (VAT £102.00); 2 × £320.00 = £640.00 (VAT £128.00); 10 × £6.40 = £64.00 (VAT £12.80). Net £510.00 + £640.00 + £64.00 = £1,214.00 ✓; VAT £102.00 + £128.00 + £12.80 = £242.80 ✓ at 20%; total £1,456.80 ✓.
@@ -36,7 +44,7 @@ Three audits of invoices from [fixtures/](fixtures/), in the exact shape every a
 [pass] Arithmetic — all lines, the VAT total and the gross total recompute exactly [reg 14(1)(h)]
 ```
 
-**Verdict: COMPLIANT** — invalid-invoice: 0 · defective-field: 0 · advisory: 0 · passes: 14
+**Verdict: COMPLIANT** — invalid-invoice: 0 · defective-field: 0 · advisory: 0 · passes: 16
 
 ---
 
@@ -62,12 +70,21 @@ the regulation permits net amounts "expressed in any currency", so this is not a
 no action needed [reg 14(1)(h)]
 [pass] Per description: quantity (8), VAT rate (20%) and net amount shown [reg 14(1)(h)]
 [pass] Gross total payable excluding VAT — "€1,794.00" [reg 14(1)(i)]
+[pass] Cash discount — ruled out: no discount is mentioned anywhere on the invoice, and a
+rate is only required where one is offered [reg 14(1)(j)]
 [invalid-invoice] VAT total — "Total VAT: €358.80" appears only in euros; the total VAT
 chargeable must be expressed in sterling whatever the invoice currency — reissue showing
 the sterling VAT (at the invoice's own stated rate of £1 = €1.15, €358.80 = £312.00)
 [reg 14(1)(l); 700/21 §4.1]
 [pass] Unit price — "€224.25" per bay [reg 14(1)(m)]
-[pass] Special references — margin scheme, reverse charge, free zone not engaged [reg 14(1)(n); reg 14(1)(o); reg 14(1)(p)]
+[pass] Margin scheme — ruled out: no antiques, art, collectors' items or tour-operator
+wording; bespoke oak shelving is not a margin-scheme category [reg 14(1)(n)]
+[pass] Reverse charge — ruled out: the invoice charges VAT directly at 20% rather than
+shifting the liability to the customer [reg 14(1)(o)]
+[pass] Free zone — ruled out: nothing places the supply within Item 1 of Group 22 of
+Schedule 8 (free zones) [reg 14(1)(p)]
+[pass] Exempt/zero-rated distinction — ruled out: the single line is charged at the
+standard 20% rate, so there is no exempt or zero-rated line to distinguish [reg 14(4)]
 ```
 
 **Arithmetic.** 8 × €224.25 = €1,794.00 ✓; VAT at 20% = €358.80 ✓; total €2,152.80 ✓.
@@ -76,7 +93,7 @@ the sterling VAT (at the invoice's own stated rate of £1 = €1.15, €358.80 =
 [pass] Arithmetic — internally exact in euros [reg 14(1)(h)]
 ```
 
-**Verdict: NON-COMPLIANT — invalid invoice** — invalid-invoice: 1 · defective-field: 0 · advisory: 1 · passes: 11
+**Verdict: NON-COMPLIANT — invalid invoice** — invalid-invoice: 1 · defective-field: 0 · advisory: 1 · passes: 15
 
 ---
 
@@ -103,6 +120,12 @@ state the reference "reverse charge", and this one nowhere does — reissue stat
 "reverse charge" so the customer knows to account for the VAT [reg 14(1)(o)]
 [pass] Gross total payable excluding VAT — "£4,200.00" [reg 14(1)(i)]
 [pass] Unit price — £4,200.00 for the single agreed-schedule supply [reg 14(1)(m)]
+[pass] Margin scheme — ruled out: no antiques, art, collectors' items or tour-operator
+wording; groundworks labour and materials are not a margin-scheme category [reg 14(1)(n)]
+[pass] Free zone — ruled out: nothing places the supply within Item 1 of Group 22 of
+Schedule 8 (free zones) [reg 14(1)(p)]
+[pass] Exempt/zero-rated distinction — ruled out: the single line is a reverse-charge
+construction supply, not an exempt or zero-rated one, so there is nothing to distinguish [reg 14(4)]
 ```
 
 **Arithmetic.** Single line, £4,200.00, no VAT charged — internally consistent with a reverse-charge treatment, which is exactly why the missing reference is dangerous: nothing on the face of the document tells the customer the VAT is theirs to account for.
@@ -113,4 +136,4 @@ state the reference "reverse charge", and this one nowhere does — reissue stat
 
 **Scope note.** HMRC's construction reverse-charge guidance (VAT Notice 735) recommends fuller wording, but that notice is not shipped in [reference/](reference/CATALOG.md) — so this audit cites only reg 14(1)(o) and says so, rather than citing from memory.
 
-**Verdict: NON-COMPLIANT — invalid invoice** — invalid-invoice: 1 · defective-field: 0 · advisory: 0 · passes: 9
+**Verdict: NON-COMPLIANT — invalid invoice** — invalid-invoice: 1 · defective-field: 0 · advisory: 0 · passes: 12
