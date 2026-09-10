@@ -15,7 +15,7 @@ Three audits of invoices from [fixtures/](fixtures/), in the exact shape every a
 **Checklist.**
 
 ```
-[pass] Sequential invoice number — "INV-2041", single identifiable series [reg 14(1)(a)]
+[pass] Invoice reference — "INV-2041" is present, in a format consistent with a sequential series [reg 14(1)(a)]
 [pass] Time of supply — "Time of supply: 12 August 2026" [reg 14(1)(b)]
 [pass] Date of issue — "14 August 2026", stated separately from the time of supply [reg 14(1)(c)]
 [pass] Supplier particulars — name, address and VAT registration number GB 111 2222 33 all present [reg 14(1)(d)]
@@ -59,7 +59,7 @@ within Item 1 of Group 22 of Schedule 8 (free zones) [reg 14(1)(p)]
 **Checklist.**
 
 ```
-[pass] Sequential invoice number — "INV-2047" [reg 14(1)(a)]
+[pass] Invoice reference — "INV-2047" is present, in a format consistent with a sequential series [reg 14(1)(a)]
 [pass] Time of supply — "29 August 2026" [reg 14(1)(b)]
 [pass] Date of issue — "29 August 2026", same day, stated [reg 14(1)(c)]
 [pass] Supplier particulars — name, address, VAT registration number GB 111 2222 33 [reg 14(1)(d)]
@@ -108,7 +108,7 @@ standard 20% rate, so there is no exempt or zero-rated line to distinguish [reg 
 **Checklist.**
 
 ```
-[pass] Sequential invoice number — "SC-0912" [reg 14(1)(a)]
+[pass] Invoice reference — "SC-0912" is present, in a format consistent with a sequential series [reg 14(1)(a)]
 [pass] Time of supply — "22 August 2026" [reg 14(1)(b)]
 [pass] Date of issue — "22 August 2026", stated [reg 14(1)(c)]
 [pass] Supplier particulars — name, address, VAT registration number GB 777 8888 99 [reg 14(1)(d)]
