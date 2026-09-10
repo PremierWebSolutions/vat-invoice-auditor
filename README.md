@@ -24,6 +24,25 @@ One sales invoice at a time, as text: a pasted invoice body, a markdown file, or
 
 What comes back: a classification (full, simplified or retailer invoice), a check-by-check walk with one citation per line, findings graded **invalid-invoice / defective-field / advisory**, explicit passes, and a one-line verdict with counts. The format is specified in [rules.md](rules.md) and demonstrated in [examples.md](examples.md).
 
+## Using it in a bookkeeping workflow
+
+Where this earns its keep is **incoming purchase invoices**: the supplier invoices a bookkeeper processes and reclaims input tax on, which nobody in-house had a hand in producing. Your own outgoing invoices are better policed by your invoicing software, and the one thing that matters most for them (no gaps or repeats across the whole numbered run) needs the full sales ledger, which a document-by-document auditor never sees. This tool audits documents; it is not a ledger check.
+
+For a stack of invoices, hand it the batch in one request:
+
+> Audit every invoice in *(folder, or paste them all)*, one full audit each, then the summary table.
+
+[rules.md §6](rules.md) governs what happens next: each invoice gets its complete audit, nothing found in one is allowed to colour another, and a summary table (verdict, counts, headline finding per invoice) comes last, as an index to the audits, never a substitute for them. Two checks only exist at batch level and are reported there: the same reference number on two documents, and one supplier carrying two different VAT registration numbers. Nothing is written to disk; the audits are the session's output, so copy what you need into your working papers.
+
+## What it checks against, exactly
+
+Not HMRC's VAT material in general, but one deliberately narrow slice of it, chosen because it is the whole of the law on what a VAT invoice must say and nothing else:
+
+- **Regulations 13, 14, 16 and 16A of the Value Added Tax Regulations 1995 (SI 1995/2518)**: who must issue a VAT invoice, the particulars a full invoice must state (reg 14(1)(a)–(p)), and the £250 relaxations for retailers' and simplified invoices. Fetched from legislation.gov.uk's consolidated text.
+- **VAT Notice 700/21, sections 3 and 4 only**: HMRC's operational reading of those regulations. The rest of that notice (record keeping, VAT accounts, Making Tax Digital) is out of scope and not shipped.
+
+That is the entire standard. VAT liability, rates, exemption, input tax recovery, penalties, the construction reverse charge in detail (Notice 735), self-billing (Notice 700/62) and the main VAT guide (Notice 700) are **not** in the folder, and [identity.md](identity.md) forbids the auditor from citing any of them from memory: if an answer would need them, it names the gap and stops. The mapping from those provisions to checks (the audit order, the severity of each defect, the verdict lines) is in [rules.md](rules.md) and is this repo's own work, not HMRC's; the severity judgments are drafted by the author and flagged for a practising accountant's review in [docs/review-notes.md](docs/review-notes.md).
+
 ## What's in the folder
 
 | File | Role |
@@ -32,14 +51,14 @@ What comes back: a classification (full, simplified or retailer invoice), a chec
 | [rules.md](rules.md) | Audit order, citation grammar, severity table, verdicts |
 | [examples.md](examples.md) | Three worked audits showing the exact expected output |
 | [reference/](reference/CATALOG.md) | The standard itself, verbatim and version-dated, one card per provision |
-| [fixtures/](fixtures/) | Ten synthetic test invoices (2 compliant, 8 broken) — inputs only, no answers |
+| [fixtures/](fixtures/) | Ten synthetic test invoices (2 compliant, 8 broken); inputs only, no answers |
 | [tools/check_citations.py](tools/check_citations.py) | Offline checker: every citation and quote must resolve against reference/ or a fixture |
 | [tools/check_arithmetic.py](tools/check_arithmetic.py) | Offline checker: every fixture's net/VAT/total arithmetic is recomputed from its own numbers |
 | [tools/check_no_network.py](tools/check_no_network.py) | Offline checker: proves the checkers above make no network, subprocess or hosted-LLM call |
 | [tools/check_reference_integrity.py](tools/check_reference_integrity.py) | Offline checker: every reference/ file matches its recorded SHA-256 ([reference/MANIFEST.md](reference/MANIFEST.md)) |
-| [tools/check_freshness.sh](tools/check_freshness.sh) | The one script that touches the network: checks each vendored standard against its live source (not run in CI — see below) |
+| [tools/check_freshness.sh](tools/check_freshness.sh) | The one script that touches the network: checks each vendored standard against its live source (not run in CI; see below) |
 
-The drop-in unit is the five things above the line: identity, rules, examples, reference, and the fixtures as plain invoice text. **The answer key is not in that folder.** It lives in [judge-answer-key/](judge-answer-key/EXPECTED.md), a sibling directory the auditor is never pointed at and a real production setup never uploads — separated by folder position, not by an instruction the auditor is trusted to police itself. Do not load the whole repo into context for an audit either way: the auditor reads [reference/CATALOG.md](reference/CATALOG.md) and opens only the card the invoice in front of it needs; a full invoice needs reg 14 and one notice section, nothing more. If you set the folder up for real production use rather than testing, leave `fixtures/`, `judge-answer-key/`, `tools/` and `docs/` out entirely — they exist to test and evidence the auditor, not to audit anything.
+The drop-in unit is the five things above the line: identity, rules, examples, reference, and the fixtures as plain invoice text. **The answer key is not in that folder.** It lives in [judge-answer-key/](judge-answer-key/EXPECTED.md), a sibling directory the auditor is never pointed at and a real production setup never uploads, separated by folder position, not by an instruction the auditor is trusted to police itself. Do not load the whole repo into context for an audit either way: the auditor reads [reference/CATALOG.md](reference/CATALOG.md) and opens only the card the invoice in front of it needs; a full invoice needs reg 14 and one notice section, nothing more. If you set the folder up for real production use rather than testing, leave `fixtures/`, `judge-answer-key/`, `tools/` and `docs/` out entirely; they exist to test and evidence the auditor, not to audit anything.
 
 ## Checking the citations, quotes, arithmetic, isolation and integrity
 
@@ -52,7 +71,7 @@ python3 tools/check_no_network.py
 python3 tools/check_reference_integrity.py
 ```
 
-`check_citations.py` checks two things: every citation points at a provision that exists (and is not revoked) in reference/, and every double-quoted span in the auditor's files appears verbatim in a fixture invoice or in the shipped standard — a fabricated quote fails mechanically no matter how convincing it reads. `check_arithmetic.py` recomputes every fixture invoice's line items, VAT and totals from its own stated numbers, so a plausible-looking "recomputes exactly" claim is either true or the run fails, and an invoice shape the parser doesn't recognise is a hard failure rather than a silent skip. `check_no_network.py` proves — by scanning the source of the checkers above, not by trusting their docstrings — that none of them contains an actual import of or call to a network, subprocess, or hosted-LLM-API module; it checks its own source too. `check_reference_integrity.py` verifies every file in reference/ against a SHA-256 recorded in [reference/MANIFEST.md](reference/MANIFEST.md), so a change to the standard's text — deliberate or not — cannot pass unnoticed.
+`check_citations.py` checks two things: every citation points at a provision that exists (and is not revoked) in reference/, and every double-quoted span in the auditor's files appears verbatim in a fixture invoice or in the shipped standard, so a fabricated quote fails mechanically no matter how convincing it reads. `check_arithmetic.py` recomputes every fixture invoice's line items, VAT and totals from its own stated numbers, so a plausible-looking "recomputes exactly" claim is either true or the run fails, and an invoice shape the parser doesn't recognise is a hard failure rather than a silent skip. `check_no_network.py` proves, by scanning the source of the checkers above rather than trusting their docstrings, that none of them contains an actual import of or call to a network, subprocess, or hosted-LLM-API module; it checks its own source too. `check_reference_integrity.py` verifies every file in reference/ against a SHA-256 recorded in [reference/MANIFEST.md](reference/MANIFEST.md), so a change to the standard's text, deliberate or not, cannot pass unnoticed.
 
 Any kind of plant fails its run with the file, line and reason, and every tool prints what it does not check. To prove the gates themselves fire, run each self-test: a clean fixture must pass and a deliberately broken one must trigger every planted defect.
 
@@ -65,7 +84,7 @@ python3 tools/check_reference_integrity.py --self-test
 
 All eight runs (four checks, four self-tests) run in CI on every push ([.github/workflows/check.yml](.github/workflows/check.yml)).
 
-A fifth script, [tools/check_freshness.sh](tools/check_freshness.sh), deliberately sits outside that guarantee — it fetches each source URL live and greps for a canary phrase from the vendored text, to catch the standard itself moving. It is the one part of this repo that touches the network, which is exactly why it does not run in CI: run it by hand before relying on this auditor for anything that matters, and periodically after that.
+A fifth script, [tools/check_freshness.sh](tools/check_freshness.sh), deliberately sits outside that guarantee: it fetches each source URL live and greps for a canary phrase from the vendored text, to catch the standard itself moving. It is the one part of this repo that touches the network, which is exactly why it does not run in CI: run it by hand before relying on this auditor for anything that matters, and periodically after that.
 
 ## The standard's version pin
 
@@ -81,17 +100,18 @@ Legislation and guidance change. Each file in [reference/](reference/CATALOG.md)
 
 ## Receipts
 
-Four evidence files, all outside the drop-in folder:
+Five evidence files, all outside the drop-in folder:
 
-- [docs/cold-walk.md](docs/cold-walk.md) — a fresh session using the auditor with no prior context, catching a planted defect and correcting the answer sheet when its own reading was better than mine.
-- [docs/refusal-under-pressure.md](docs/refusal-under-pressure.md) — the same kind of session run through four disguised requests to skip the audit entirely — a yes/no shortcut, a request to draft a replacement invoice, a request to certify compliance under deadline pressure, a request to skip straight to a ranking.
-- [docs/verdict-under-pressure.md](docs/verdict-under-pressure.md) — a different pressure test: whether a correct, already-issued finding survives a user arguing it should change (informal norms, claimed authority, a request for a bare opinion, a genuine technical challenge to what the regulation requires), plus a scope-discipline check — handed a document that was never an invoice at all, does it invent findings or decline correctly.
-- [docs/reword-robustness.md](docs/reword-robustness.md) — three independent, freshly-started sessions each audited the same underlying defect presented a different way (a casual reformat, a decoy Companies House number standing where a VAT number should be, and a paragraph of prose asserting registration without ever giving a number), to check the finding tracks what the regulation requires rather than the shape of any one fixture. Run in response to a specific test a community member proposed on this competition's own thread — full credit and the quote are in the file.
+- [docs/cold-walk.md](docs/cold-walk.md): a fresh session using the auditor with no prior context, catching a planted defect and correcting the answer sheet when its own reading was better than mine.
+- [docs/refusal-under-pressure.md](docs/refusal-under-pressure.md): the same kind of session run through four disguised requests to skip the audit entirely: a yes/no shortcut, a request to draft a replacement invoice, a request to certify compliance under deadline pressure, a request to skip straight to a ranking.
+- [docs/verdict-under-pressure.md](docs/verdict-under-pressure.md): a different pressure test: whether a correct, already-issued finding survives a user arguing it should change (informal norms, claimed authority, a request for a bare opinion, a genuine technical challenge to what the regulation requires), plus a scope-discipline check: handed a document that was never an invoice at all, does it invent findings or decline correctly.
+- [docs/reword-robustness.md](docs/reword-robustness.md): three independent, freshly-started sessions each audited the same underlying defect presented a different way (a casual reformat, a decoy Companies House number standing where a VAT number should be, and a paragraph of prose asserting registration without ever giving a number), to check the finding tracks what the regulation requires rather than the shape of any one fixture. Run in response to a specific test a community member proposed on this competition's own thread; full credit and the quote are in the file.
+- [docs/batch-run.md](docs/batch-run.md): one fresh session given all ten fixtures in a single request, under [rules.md §6](rules.md). Every invoice got its full walk, nothing crossed between them (the missing VAT number on one Bluewharf invoice was reported as missing, not filled in from the four other Bluewharf invoices in the same batch), every verdict matched the answer key the session never opened, and the summary table came last.
 
-Every transcript is published in full, not summarised — the claim in each file's own opening section is a read of what follows, not a substitute for it.
+Every transcript is published in full, not summarised; the claim in each file's own opening section is a read of what follows, not a substitute for it.
 
 ## Licence
 
-The auditor's own files are MIT-licensed ([LICENSE](LICENSE)). The files in [reference/](reference/CATALOG.md) reproduce Crown copyright material — public sector information licensed under the [Open Government Licence v3.0](https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/), from [legislation.gov.uk](https://www.legislation.gov.uk/uksi/1995/2518) and [GOV.UK](https://www.gov.uk/guidance/record-keeping-for-vat-notice-70021), with source and access date stated in each file.
+The auditor's own files are MIT-licensed ([LICENSE](LICENSE)). The files in [reference/](reference/CATALOG.md) reproduce Crown copyright material: public sector information licensed under the [Open Government Licence v3.0](https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/), from [legislation.gov.uk](https://www.legislation.gov.uk/uksi/1995/2518) and [GOV.UK](https://www.gov.uk/guidance/record-keeping-for-vat-notice-70021), with source and access date stated in each file.
 
 [AGENTS.md](AGENTS.md) is the engineering ruleset for agents working on this repo. Users of the auditor never need it.

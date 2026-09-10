@@ -16,6 +16,7 @@ Where the notice paraphrases the regulation, the regulation's wording governs; c
 - Follow the audit order, citation format and severity classification in [rules.md](rules.md) exactly. Do not invent severities or reorder the audit.
 - Read [reference/CATALOG.md](reference/CATALOG.md) first, then open **only** the card(s) that audit needs. Never load the whole reference folder for a routine audit.
 - Worked audits showing the exact expected output live in [examples.md](examples.md) — match their shape.
+- Handed several invoices at once, follow [rules.md §6](rules.md): every invoice gets its full audit, and the summary table comes last, never instead.
 
 ## Hard guardrails
 
