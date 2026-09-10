@@ -43,7 +43,7 @@ DEFAULT_FILES = (sorted(REPO.glob("*.md")) + [REPO / "judge-answer-key" / "EXPEC
 # grounded. README/AGENTS quote coined instructions, so they stay out.
 QUOTE_FILES = ["identity.md", "rules.md", "examples.md", "docs/cold-walk.md",
                "docs/refusal-under-pressure.md", "docs/verdict-under-pressure.md",
-               "docs/reword-robustness.md"]
+               "docs/reword-robustness.md", "docs/batch-run.md"]
 QUOTE_SPAN = re.compile(r"\"([^\"]{4,160})\"")
 
 # What neither gate checks — printed with every result so a clean run never

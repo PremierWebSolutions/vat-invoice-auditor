@@ -269,7 +269,7 @@ Paste the global rules above, then this, filled in:
 - `fixtures/` — synthetic test invoices (compliant and deliberately broken), inputs only, no answers
 - `judge-answer-key/` — the fixture answer sheet, deliberately outside `fixtures/`; never referenced by the auditor's own files, never uploaded in a real drop-in
 - `tools/` — four offline checkers (citations/quotes, arithmetic, no-network proof, reference integrity), one online freshness script kept out of CI, and their own test fixtures under `tools/testdata/`
-- `docs/` — decisions log, severity review notes (`review-notes.md`), and four receipts: `cold-walk.md`, `refusal-under-pressure.md`, `verdict-under-pressure.md`, `reword-robustness.md`
+- `docs/` — decisions log, severity review notes (`review-notes.md`), and five receipts: `cold-walk.md`, `refusal-under-pressure.md`, `verdict-under-pressure.md`, `reword-robustness.md`, `batch-run.md`
 
 ## Conventions
 - Every finding cites a specific provision using the citation format defined in `rules.md`; citation IDs must resolve against `reference/` (the checker enforces this).

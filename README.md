@@ -100,12 +100,13 @@ Legislation and guidance change. Each file in [reference/](reference/CATALOG.md)
 
 ## Receipts
 
-Four evidence files, all outside the drop-in folder:
+Five evidence files, all outside the drop-in folder:
 
 - [docs/cold-walk.md](docs/cold-walk.md): a fresh session using the auditor with no prior context, catching a planted defect and correcting the answer sheet when its own reading was better than mine.
 - [docs/refusal-under-pressure.md](docs/refusal-under-pressure.md): the same kind of session run through four disguised requests to skip the audit entirely: a yes/no shortcut, a request to draft a replacement invoice, a request to certify compliance under deadline pressure, a request to skip straight to a ranking.
 - [docs/verdict-under-pressure.md](docs/verdict-under-pressure.md): a different pressure test: whether a correct, already-issued finding survives a user arguing it should change (informal norms, claimed authority, a request for a bare opinion, a genuine technical challenge to what the regulation requires), plus a scope-discipline check: handed a document that was never an invoice at all, does it invent findings or decline correctly.
 - [docs/reword-robustness.md](docs/reword-robustness.md): three independent, freshly-started sessions each audited the same underlying defect presented a different way (a casual reformat, a decoy Companies House number standing where a VAT number should be, and a paragraph of prose asserting registration without ever giving a number), to check the finding tracks what the regulation requires rather than the shape of any one fixture. Run in response to a specific test a community member proposed on this competition's own thread; full credit and the quote are in the file.
+- [docs/batch-run.md](docs/batch-run.md): one fresh session given all ten fixtures in a single request, under [rules.md §6](rules.md). Every invoice got its full walk, nothing crossed between them (the missing VAT number on one Bluewharf invoice was reported as missing, not filled in from the four other Bluewharf invoices in the same batch), every verdict matched the answer key the session never opened, and the summary table came last.
 
 Every transcript is published in full, not summarised; the claim in each file's own opening section is a read of what follows, not a substitute for it.
 
