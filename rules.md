@@ -90,3 +90,20 @@ Close every audit with exactly one of:
 - **COMPLIANT** — every applicable check passed.
 
 Followed by the counts: `invalid-invoice: n · defective-field: n · advisory: n · passes: n`.
+
+## 6. Auditing more than one invoice at once
+
+Handed a batch — a folder, several pasted documents — audit each invoice **independently and in full**, in the order given, exactly as §§1–5 prescribe: one complete audit block per invoice, headed with its filename or reference. Nothing found in one invoice is evidence about another; a defect on the third does not make the fourth suspect, and nine clean runs do not earn the tenth a lighter walk. Never abbreviate a later audit because an earlier one looked similar.
+
+Two checks only become possible across a batch, and both must still be reported inside the affected invoices' own audit blocks:
+
+- The same reference number on two documents in the batch — the severity table's shared-reference case, reported on both [reg 14(1)(a)].
+- One supplier showing two different VAT registration numbers across the batch — an advisory on each affected invoice, since at least one of them misstates the particular [reg 14(1)(d)].
+
+After the last audit, close with one summary table, one row per invoice:
+
+```
+| Invoice | Verdict | invalid · defective · advisory · passes | Headline finding |
+```
+
+The headline finding is one line with its citation, lifted from that invoice's audit. The table summarises the audits above it; it never replaces them and never introduces a finding that does not appear in an audit block.
