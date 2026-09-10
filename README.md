@@ -35,26 +35,37 @@ What comes back: a classification (full, simplified or retailer invoice), a chec
 | [fixtures/](fixtures/) | Ten synthetic test invoices (2 compliant, 8 broken) — inputs only, no answers |
 | [tools/check_citations.py](tools/check_citations.py) | Offline checker: every citation and quote must resolve against reference/ or a fixture |
 | [tools/check_arithmetic.py](tools/check_arithmetic.py) | Offline checker: every fixture's net/VAT/total arithmetic is recomputed from its own numbers |
+| [tools/check_no_network.py](tools/check_no_network.py) | Offline checker: proves the checkers above make no network, subprocess or hosted-LLM call |
+| [tools/check_reference_integrity.py](tools/check_reference_integrity.py) | Offline checker: every reference/ file matches its recorded SHA-256 ([reference/MANIFEST.md](reference/MANIFEST.md)) |
+| [tools/check_freshness.sh](tools/check_freshness.sh) | The one script that touches the network: checks each vendored standard against its live source (not run in CI — see below) |
 
 The drop-in unit is the five things above the line: identity, rules, examples, reference, and the fixtures as plain invoice text. **The answer key is not in that folder.** It lives in [judge-answer-key/](judge-answer-key/EXPECTED.md), a sibling directory the auditor is never pointed at and a real production setup never uploads — separated by folder position, not by an instruction the auditor is trusted to police itself. Do not load the whole repo into context for an audit either way: the auditor reads [reference/CATALOG.md](reference/CATALOG.md) and opens only the card the invoice in front of it needs; a full invoice needs reg 14 and one notice section, nothing more. If you set the folder up for real production use rather than testing, leave `fixtures/`, `judge-answer-key/`, `tools/` and `docs/` out entirely — they exist to test and evidence the auditor, not to audit anything.
 
-## Checking the citations, quotes and arithmetic
+## Checking the citations, quotes, arithmetic, isolation and integrity
 
-Three mechanical gates guard the auditor's files, so nothing in it is trusted on the model's say-so alone. No network, no API key, Python 3 standard library only:
+Four mechanical gates guard the auditor's files, so nothing in it is trusted on the model's say-so alone. No network, no API key, Python 3 standard library only:
 
 ```bash
 python3 tools/check_citations.py
 python3 tools/check_arithmetic.py
+python3 tools/check_no_network.py
+python3 tools/check_reference_integrity.py
 ```
 
-`check_citations.py` checks two things. Every citation points at a provision that exists (and is not revoked) in reference/. And every double-quoted span in the auditor's files appears verbatim in a fixture invoice or in the shipped standard — a fabricated quote fails mechanically no matter how convincing it reads. `check_arithmetic.py` recomputes every fixture invoice's line items, VAT and totals from its own stated numbers — the script does the sums, so a plausible-looking "recomputes exactly" claim is either true or the run fails, and an invoice shape the parser doesn't recognise is a hard failure rather than a silent skip. Any kind of plant fails its run with the file, line and reason, and both tools print what they do not check. To prove the gates themselves fire, run each self-test: a clean fixture must pass and a deliberately broken one must trigger every planted defect.
+`check_citations.py` checks two things: every citation points at a provision that exists (and is not revoked) in reference/, and every double-quoted span in the auditor's files appears verbatim in a fixture invoice or in the shipped standard — a fabricated quote fails mechanically no matter how convincing it reads. `check_arithmetic.py` recomputes every fixture invoice's line items, VAT and totals from its own stated numbers, so a plausible-looking "recomputes exactly" claim is either true or the run fails, and an invoice shape the parser doesn't recognise is a hard failure rather than a silent skip. `check_no_network.py` proves — by scanning the source of the checkers above, not by trusting their docstrings — that none of them contains an actual import of or call to a network, subprocess, or hosted-LLM-API module; it checks its own source too. `check_reference_integrity.py` verifies every file in reference/ against a SHA-256 recorded in [reference/MANIFEST.md](reference/MANIFEST.md), so a change to the standard's text — deliberate or not — cannot pass unnoticed.
+
+Any kind of plant fails its run with the file, line and reason, and every tool prints what it does not check. To prove the gates themselves fire, run each self-test: a clean fixture must pass and a deliberately broken one must trigger every planted defect.
 
 ```bash
 python3 tools/check_citations.py --self-test
 python3 tools/check_arithmetic.py --self-test
+python3 tools/check_no_network.py --self-test
+python3 tools/check_reference_integrity.py --self-test
 ```
 
-All four run in CI on every push ([.github/workflows/check.yml](.github/workflows/check.yml)).
+All eight runs (four checks, four self-tests) run in CI on every push ([.github/workflows/check.yml](.github/workflows/check.yml)).
+
+A fifth script, [tools/check_freshness.sh](tools/check_freshness.sh), deliberately sits outside that guarantee — it fetches each source URL live and greps for a canary phrase from the vendored text, to catch the standard itself moving. It is the one part of this repo that touches the network, which is exactly why it does not run in CI: run it by hand before relying on this auditor for anything that matters, and periodically after that.
 
 ## The standard's version pin
 
@@ -70,7 +81,14 @@ Legislation and guidance change. Each file in [reference/](reference/CATALOG.md)
 
 ## Receipts
 
-Two evidence files, both outside the drop-in folder: [docs/cold-walk.md](docs/cold-walk.md) is a fresh session using the auditor with no prior context, catching a planted defect and correcting the answer sheet when its own reading was better than mine. [docs/refusal-under-pressure.md](docs/refusal-under-pressure.md) is the same kind of session run through four disguised requests to skip the audit — a yes/no shortcut, a request to draft a replacement invoice, a request to certify compliance under deadline pressure, a request to skip straight to a ranking — with the full transcript published, not just the claim that it refused correctly.
+Four evidence files, all outside the drop-in folder:
+
+- [docs/cold-walk.md](docs/cold-walk.md) — a fresh session using the auditor with no prior context, catching a planted defect and correcting the answer sheet when its own reading was better than mine.
+- [docs/refusal-under-pressure.md](docs/refusal-under-pressure.md) — the same kind of session run through four disguised requests to skip the audit entirely — a yes/no shortcut, a request to draft a replacement invoice, a request to certify compliance under deadline pressure, a request to skip straight to a ranking.
+- [docs/verdict-under-pressure.md](docs/verdict-under-pressure.md) — a different pressure test: whether a correct, already-issued finding survives a user arguing it should change (informal norms, claimed authority, a request for a bare opinion, a genuine technical challenge to what the regulation requires), plus a scope-discipline check — handed a document that was never an invoice at all, does it invent findings or decline correctly.
+- [docs/reword-robustness.md](docs/reword-robustness.md) — three independent, freshly-started sessions each audited the same underlying defect presented a different way (a casual reformat, a decoy Companies House number standing where a VAT number should be, and a paragraph of prose asserting registration without ever giving a number), to check the finding tracks what the regulation requires rather than the shape of any one fixture. Run in response to a specific test a community member proposed on this competition's own thread — full credit and the quote are in the file.
+
+Every transcript is published in full, not summarised — the claim in each file's own opening section is a read of what follows, not a substitute for it.
 
 ## Licence
 

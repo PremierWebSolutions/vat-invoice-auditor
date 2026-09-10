@@ -17,3 +17,5 @@ Typical loads:
 - Question is *whether an invoice was required at all* → reg 13 + Notice §4.6.
 
 The severity classification and citation format live in [rules.md](../rules.md), not here.
+
+Every file above is checked against a recorded SHA-256 in [MANIFEST.md](MANIFEST.md) — run `python3 ../tools/check_reference_integrity.py` from `reference/`, or `python3 tools/check_reference_integrity.py` from the repo root, to verify none of them has drifted.

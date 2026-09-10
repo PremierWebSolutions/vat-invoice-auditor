@@ -13,3 +13,11 @@ jobs:
         run: python3 tools/check_arithmetic.py --self-test
       - name: Recompute every fixture's arithmetic from its own stated numbers
         run: python3 tools/check_arithmetic.py
+      - name: No-network scanner self-test (must itself be provably alive)
+        run: python3 tools/check_no_network.py --self-test
+      - name: Prove the checkers make no network, subprocess or LLM call
+        run: python3 tools/check_no_network.py
+      - name: Reference integrity self-test (must itself be provably alive)
+        run: python3 tools/check_reference_integrity.py --self-test
+      - name: Verify every reference/ file against its recorded SHA-256
+        run: python3 tools/check_reference_integrity.py
