@@ -257,7 +257,7 @@ Paste the global rules above, then this, filled in:
 ## This project
 
 **What it is:** a drop-in folder that turns a Claude project into a UK VAT invoice compliance auditor, checking sales invoices against VAT Notice 700/21 and regulation 14 of the VAT Regulations 1995 — built as Andy's entry for the Clief Notes weekly comp "THE AUDITOR".
-**Stack:** Markdown files plus one offline checker in Python 3 standard library. No dependencies, no network calls, no API keys, no database, no server.
+**Stack:** Markdown files plus four offline checkers in Python 3 standard library, and one deliberately-online shell script kept out of CI. No dependencies, no network calls (except that one script), no API keys, no database, no server.
 **Deploy:** push to the public GitHub repo `PremierWebSolutions/vat-invoice-auditor`. Judges pin to the last commit before the deadline (Friday 2026-09-11, 11:59 PM EST), so `main` must be submission-ready at every commit.
 **Environments:** none — the repo is the product.
 
@@ -265,11 +265,11 @@ Paste the global rules above, then this, filled in:
 - `identity.md` — who the auditor is and what standard it enforces
 - `rules.md` — audit order, citation format, severity classification
 - `examples.md` — worked example audits with citations
-- `reference/` — the actual standard text, version-dated, under the Open Government Licence
+- `reference/` — the actual standard text, version-dated, under the Open Government Licence; `MANIFEST.md` records each file's SHA-256
 - `fixtures/` — synthetic test invoices (compliant and deliberately broken), inputs only, no answers
 - `judge-answer-key/` — the fixture answer sheet, deliberately outside `fixtures/`; never referenced by the auditor's own files, never uploaded in a real drop-in
-- `tools/` — the offline citation/quote checker, the arithmetic checker, and their own test fixtures
-- `docs/` — decisions log, cold-walk receipt (docs/cold-walk.md), refusal-under-pressure receipt (docs/refusal-under-pressure.md), severity review notes (docs/review-notes.md)
+- `tools/` — four offline checkers (citations/quotes, arithmetic, no-network proof, reference integrity), one online freshness script kept out of CI, and their own test fixtures under `tools/testdata/`
+- `docs/` — decisions log, severity review notes (`review-notes.md`), and four receipts: `cold-walk.md`, `refusal-under-pressure.md`, `verdict-under-pressure.md`, `reword-robustness.md`
 
 ## Conventions
 - Every finding cites a specific provision using the citation format defined in `rules.md`; citation IDs must resolve against `reference/` (the checker enforces this).
@@ -286,6 +286,8 @@ Paste the global rules above, then this, filled in:
 - **All invoice data in this repo is synthetic.** No real client, supplier, VAT number, or address may ever appear — Andy is a practising accountant and this repo is public.
 - The competition auto-fails a `reference/` folder that does not contain the standard itself — a summary or a link is a fail. Keep the verbatim text in.
 - The README must NOT tell users to load every file into context — an earlier comp cycle failed entries for exactly that. Catalog first, load one card at a time.
-- Judges actively try to break entries (past cycles planted a bad citation, a fabricated quote, a planted SHA, and a wrong line number) — `tools/check_citations.py` must fail loudly on any citation that doesn't resolve against `reference/` AND on any double-quoted span in identity/rules/examples/cold-walk that appears in no fixture and no reference card; `tools/check_arithmetic.py` must fail loudly on any fixture whose stated net/VAT/total figures don't reconcile against each other, with an unrecognised invoice shape treated as a hard failure, never a silent skip. All gates must run offline with zero dependencies. Never put a quoted span in those files unless it is a verbatim quote of a fixture or the standard, and never hand-adjust a fixture's arithmetic without re-running the checker.
+- Judges actively try to break entries (past cycles planted a bad citation, a fabricated quote, a planted SHA, and a wrong line number) — `tools/check_citations.py` must fail loudly on any citation that doesn't resolve against `reference/` AND on any double-quoted span in the QUOTE_FILES list that appears in no fixture and no reference card; `tools/check_arithmetic.py` must fail loudly on any fixture whose stated net/VAT/total figures don't reconcile against each other, with an unrecognised invoice shape treated as a hard failure, never a silent skip. All checker gates must run offline with zero dependencies — `tools/check_no_network.py` proves it by scanning their source for real imports/calls, not by trusting the claim, and it must be extended to cover any new checker script added later. Never put a quoted span in a QUOTE_FILES entry unless it is a verbatim quote of a fixture or the standard, and never hand-adjust a fixture's arithmetic without re-running the checker.
+- `tools/check_freshness.sh` is the one script allowed to touch the network — do not add network calls anywhere else, and do not add `tools/check_freshness.sh` (or anything like it) to CI; it stays a manual/periodic tool by design.
+- `reference/MANIFEST.md` is generated by `python3 tools/check_reference_integrity.py --write` — never hand-edit its hashes. Regenerate it only immediately after a deliberate, disclosed re-fetch of a `reference/` file, never to silence an unexplained mismatch.
 - VAT numbers in fixtures use obviously-fake but format-valid GB patterns; the checker does not validate VAT number checksums (out of scope, documented).
 - **Never move the answer key back into `fixtures/` or reference it from `identity.md`/`rules.md`/`examples.md`/`CLAUDE.md`.** Past judging cycles have shown that an instruction telling the auditor not to read a file is not trusted on its own — the fix is the file's folder position, not the wording of the warning. `judge-answer-key/` being a sibling of `fixtures/`, not a child, is the whole point.
