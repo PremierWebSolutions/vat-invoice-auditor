@@ -10,7 +10,7 @@ or, in a chat: **Audit every invoice in invoices/**
 
 To check a single one: **Audit invoices/that-invoice.pdf**
 
-A sample invoice, `SAMPLE-invoice.pdf`, already sits here so you can try the tool straight away — it's a made-up but correct invoice, so auditing it returns COMPLIANT. Delete it once you've added your own, or it'll be audited alongside them. (To watch a fault get caught, run the tool's built-in broken test invoices: `./tools/audit.sh fixtures/*.md`.)
+Four sample invoices (`SAMPLE-1` to `SAMPLE-4`) already sit here as PDFs so you can try the tool straight away. They're made up, but modelled on the kind of software and subscription invoices a practice actually receives, and they show the range of outcomes: `SAMPLE-1` is a clean full invoice (COMPLIANT), `SAMPLE-2` is a US supplier with no VAT number (fails), `SAMPLE-3` is a statement of account rather than a VAT invoice (the tool explains it can't stand as your invoice and tells you to request the real one), and `SAMPLE-4` is a small subscription receipt under £250 (a valid simplified invoice). Delete them once you've added your own, or they'll be audited alongside them.
 
 ## Two things worth knowing
 

@@ -15,7 +15,7 @@ You need the [Claude Code](https://claude.com/claude-code) command line installe
 ./tools/audit.sh invoices/*.pdf
 ```
 
-Each invoice gets its own full audit, followed by a summary table. Everything you put in `invoices/` stays on your machine: that folder is git-ignored, so a real supplier's invoice is never committed to the repo. To keep a copy of the report, redirect it: `./tools/audit.sh invoices/*.pdf > audits/2026-09-11.md` (`audits/` is git-ignored too). A ready-made `SAMPLE-invoice.pdf` sits in the folder so you can try it before adding your own.
+Each invoice gets its own full audit, followed by a summary table. Everything you put in `invoices/` stays on your machine: that folder is git-ignored, so a real supplier's invoice is never committed to the repo. To keep a copy of the report, redirect it: `./tools/audit.sh invoices/*.pdf > audits/2026-09-11.md` (`audits/` is git-ignored too). Four ready-made sample PDFs (`SAMPLE-1` to `SAMPLE-4`) sit in the folder so you can try it before adding your own — a clean invoice, one that fails, a statement that isn't a VAT invoice, and a simplified receipt.
 
 ## See it work first
 

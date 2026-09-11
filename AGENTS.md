@@ -268,7 +268,7 @@ Paste the global rules above, then this, filled in:
 - `reference/` — the actual standard text, version-dated, under the Open Government Licence; `MANIFEST.md` records each file's SHA-256
 - `fixtures/` — synthetic test invoices (compliant and deliberately broken), inputs only, no answers
 - `judge-answer-key/` — the fixture answer sheet, deliberately outside `fixtures/`; never routed to or read by the auditor's own files, never uploaded in a real drop-in. `CLAUDE.md` names it exactly once, as a prohibition (see the gotcha below for why that is allowed)
-- `invoices/` — the user's own working folder for real invoices (PDF or text). Only `README.md` and the shipped `SAMPLE-invoice.pdf` are tracked; everything else is git-ignored so real client documents never reach the public repo. Nothing in `tools/` scans it
+- `invoices/` — the user's own working folder for real invoices (PDF or text). Only `README.md` and the shipped `SAMPLE-*.pdf` demos are tracked; everything else is git-ignored so real client documents never reach the public repo. The `SAMPLE-*` PDFs are fictional reconstructions modelled on real-world software/subscription invoices — regenerate them, never paste a real invoice in as a sample. Nothing in `tools/` scans this folder
 - `tools/` — four offline checkers (citations/quotes, arithmetic, no-network proof, reference integrity), one online freshness script kept out of CI, the `audit.sh` runner (calls the Claude CLI), and the checkers' own test fixtures under `tools/testdata/`
 - `docs/` — decisions log, severity review notes (`review-notes.md`), and five receipts: `cold-walk.md`, `refusal-under-pressure.md`, `verdict-under-pressure.md`, `reword-robustness.md`, `batch-run.md`
 
