@@ -256,7 +256,7 @@ Paste the global rules above, then this, filled in:
 
 ## This project
 
-**What it is:** a drop-in folder that turns a Claude project into a UK VAT invoice compliance auditor, checking sales invoices against VAT Notice 700/21 and regulation 14 of the VAT Regulations 1995 — built as Andy's entry for the Clief Notes weekly comp "THE AUDITOR".
+**What it is:** a drop-in folder that turns a Claude project into a UK VAT invoice compliance auditor, checking sales invoices against VAT Notice 700/21 and regulation 14 of the VAT Regulations 1995 — built as an entry for the Clief Notes weekly comp "THE AUDITOR".
 **Stack:** Markdown files plus four offline checkers in Python 3 standard library, and one deliberately-online shell script kept out of CI. No dependencies, no network calls (except that one script), no API keys, no database, no server.
 **Deploy:** push to the public GitHub repo `PremierWebSolutions/vat-invoice-auditor`. Judges pin to the last commit before the deadline (Friday 2026-09-11, 11:59 PM EST), so `main` must be submission-ready at every commit.
 **Environments:** none — the repo is the product.
@@ -284,7 +284,7 @@ Paste the global rules above, then this, filled in:
 - `reference/` file bodies below their attribution header — they are verbatim excerpts of Crown copyright material under OGL v3.0. Never paraphrase, reword, or "tidy" them. The only valid edit is a fresh re-fetch from the source with an updated access date.
 
 ## Gotchas
-- **All invoice data in this repo is synthetic.** No real client, supplier, VAT number, or address may ever appear — Andy is a practising accountant and this repo is public.
+- **All invoice data in this repo is synthetic.** No real client, supplier, VAT number, or address may ever appear — the maintainer is a practising accountant and this repo is public.
 - The competition auto-fails a `reference/` folder that does not contain the standard itself — a summary or a link is a fail. Keep the verbatim text in.
 - The README must NOT tell users to load every file into context — an earlier comp cycle failed entries for exactly that. Catalog first, load one card at a time.
 - Judges actively try to break entries (past cycles planted a bad citation, a fabricated quote, a planted SHA, and a wrong line number) — `tools/check_citations.py` must fail loudly on any citation that doesn't resolve against `reference/` AND on any double-quoted span in the QUOTE_FILES list that appears in no fixture and no reference card; `tools/check_arithmetic.py` must fail loudly on any fixture whose stated net/VAT/total figures don't reconcile against each other, with an unrecognised invoice shape treated as a hard failure, never a silent skip. All checker gates must run offline with zero dependencies — `tools/check_no_network.py` proves it by scanning their source for real imports/calls, not by trusting the claim, and it must be extended to cover any new checker script added later. Never put a quoted span in a QUOTE_FILES entry unless it is a verbatim quote of a fixture or the standard, and never hand-adjust a fixture's arithmetic without re-running the checker.

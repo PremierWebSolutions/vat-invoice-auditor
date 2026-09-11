@@ -1,4 +1,4 @@
-# Severity judgment calls — for Andy's review
+# Severity judgment calls — for professional review
 
 The severity table in [rules.md §4](../rules.md) was drafted by Claude. These are the calls that involved judgment rather than plain reading; each stands unless you overrule it, and any change is a one-line edit to the table (then re-run `python3 tools/check_citations.py`).
 
@@ -10,7 +10,7 @@ The severity table in [rules.md §4](../rules.md) was drafted by Claude. These a
 6. **Internally inconsistent VAT arithmetic → invalid-invoice** [reg 14(1)(h); reg 14(1)(l)] — a stated VAT total that does not follow from the lines misstates "the total amount of VAT chargeable".
 7. **Classification wording** (rules.md §1 step 2): a ≤£250 invoice is audited against the simplified particulars first, escalating to the full checklist only where the issuer clearly intended a full invoice. Sense-check that this matches how you'd triage in practice.
 
-## Outcome — reviewed and signed off 2026-09-11 (Andy, practising UK chartered accountant)
+## Outcome — reviewed and signed off 2026-09-11 (a practising UK chartered accountant)
 
 1. **Reverse-charge wording missing → changed to defective-field** (was invalid-invoice), with a split: it is invalid-invoice only where the reverse-charge supply still shows a separate, reclaimable VAT amount (a buyer could wrongly claim it); where the invoice is gross-only with just the wording missing, it is defective-field — nothing is wrongly reclaimable and a gross-only figure is itself an obvious prompt to check the treatment.
 2. **Kept** — missing invoice number stays defective-field.
