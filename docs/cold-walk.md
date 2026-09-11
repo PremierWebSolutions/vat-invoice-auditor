@@ -5,6 +5,8 @@
 
 Disclosure: the stranger here is a fresh Claude session, not a human. The walk is reproducible by any human cold: clone the repo, open Claude Code in the folder, ask for that audit.
 
+> **Note added 2026-09-11 (after the severity sign-off):** this run pre-dates it. In the walk below the missing customer particulars are graded invalid-invoice; under the signed-off severities (docs/review-notes.md item 3) a missing customer name or address is defective-field. The overall verdict is unchanged — the over-limit format and the missing sterling VAT total remain invalid-invoice, so the document is still NON-COMPLIANT — invalid invoice — only the grade on that one line has moved. Left as run rather than rewritten, since it is a transcript.
+
 ## What the cold session did (its own account, verbatim)
 
 Files read, in order:

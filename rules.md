@@ -6,7 +6,7 @@ Run every audit in this exact order. Each numbered step produces either passes o
 
 1. **Intake.** Identify the document: issuer, customer, date(s), currency, gross value. If it is endorsed "This is not a VAT invoice" (delivery notes, pro formas), stop and report that it falls outside reg 14 by design [reg 14(3)].
 2. **Classify.** Decide which checklist applies:
-   - Gross consideration (including VAT) **£250 or less** → the invoice *may* stand as a **simplified invoice** [reg 16A] (or a **retailer's invoice** [reg 16] if the issuer is a retailer). Audit against the simplified particulars first; only escalate to the full checklist if the issuer clearly intended a full invoice.
+   - Gross consideration (including VAT) **£250 or less** → the invoice *may* stand as a **simplified invoice** [reg 16A] (or a **retailer's invoice** [reg 16] if the issuer is a retailer). Audit against the simplified particulars: a £250-or-under invoice is judged by the lighter rules and is not penalised for lacking a full invoice's particulars.
    - Gross consideration **over £250** → the **full checklist** [reg 14(1)] applies. A simplified-format invoice over £250 is itself a finding.
    - Issuer identified for VAT in Northern Ireland invoicing a person in an EU member state → the additional particulars of [reg 14(2)] also apply.
 3. **Walk the checklist in provision order.** For a full invoice that means reg 14(1)(a) through (p), skipping revoked sub-paragraphs (f) and (k); for a simplified invoice, reg 16A(a)–(e) (or reg 16(1)(a)–(e)). One PASS or one finding per particular. **On reg 14(1)(a):** a single invoice can only show that a reference number is present and formatted consistently with a sequential series — never that it is genuinely unbroken across the issuer's full run, which needs the whole series and is outside what one document can prove. Say so; don't claim more than the document in front of you supports.
@@ -60,11 +60,12 @@ Three severities. Use these three and no others.
 | VAT total absent, or not expressed in sterling | invalid-invoice | [reg 14(1)(l)] |
 | Stated VAT does not follow from the lines and rates shown (beyond rounding) | invalid-invoice | [reg 14(1)(h); reg 14(1)(l)] |
 | Simplified-format invoice where gross consideration exceeds £250 | invalid-invoice | [reg 16A; 700/21 §4.5] |
-| "Reverse charge" reference missing where the customer must account for the VAT | invalid-invoice | [reg 14(1)(o)] |
-| Margin scheme reference missing where a margin scheme applied | invalid-invoice | [reg 14(1)(n)] |
+| Reverse-charge supply that still shows a separate, reclaimable VAT amount | invalid-invoice | [reg 14(1)(o)] |
+| "Reverse charge" wording missing where the customer accounts for the VAT, but no separate VAT amount is shown (gross only) | defective-field | [reg 14(1)(o)] |
+| Margin-scheme supply that still shows a separate, reclaimable VAT amount | invalid-invoice | [reg 14(1)(n)] |
+| Margin-scheme wording missing where a margin scheme applied, but no separate VAT amount is shown | defective-field | [reg 14(1)(n)] |
 | Exempt supply included on a simplified or retailer's invoice | invalid-invoice | [reg 16(2); 700/21 §4.5] |
-| Customer name missing | invalid-invoice | [reg 14(1)(e)] |
-| Customer address missing (name present) | defective-field | [reg 14(1)(e)] |
+| Customer name or address missing | defective-field | [reg 14(1)(e)] |
 | No reference number present anywhere on the invoice | defective-field | [reg 14(1)(a)] |
 | Same reference number seen on two documents audited together | defective-field | [reg 14(1)(a)] |
 | Date of issue absent where it differs from the time of supply | defective-field | [reg 14(1)(c)] |
@@ -79,6 +80,8 @@ Three severities. Use these three and no others.
 | Rounding differences of a penny per line | advisory | [reg 14(1)(h)] |
 
 A defect not in this table gets the severity its nearest analogue has, with the reasoning stated in the finding. Never leave a finding unclassified.
+
+**Reverse charge and margin scheme — severity turns on the VAT line, not the wording.** For both, the real risk is a separate VAT amount a buyer could wrongly reclaim. So a reverse-charge or margin-scheme supply that still shows a reclaimable VAT amount is invalid-invoice (it invites a wrong claim), while the same supply shown gross with only the required wording missing is defective-field: there is nothing wrongly reclaimable, and a gross-only figure is in any case an obvious prompt to check the treatment.
 
 ## 5. Verdict
 

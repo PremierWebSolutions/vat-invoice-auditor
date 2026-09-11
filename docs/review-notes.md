@@ -10,4 +10,14 @@ The severity table in [rules.md §4](../rules.md) was drafted by Claude. These a
 6. **Internally inconsistent VAT arithmetic → invalid-invoice** [reg 14(1)(h); reg 14(1)(l)] — a stated VAT total that does not follow from the lines misstates "the total amount of VAT chargeable".
 7. **Classification wording** (rules.md §1 step 2): a ≤£250 invoice is audited against the simplified particulars first, escalating to the full checklist only where the issuer clearly intended a full invoice. Sense-check that this matches how you'd triage in practice.
 
-Once reviewed, record the outcome here (item by item: kept / changed to what) and update [decisions.md](decisions.md).
+## Outcome — reviewed and signed off 2026-09-11 (Andy, practising UK chartered accountant)
+
+1. **Reverse-charge wording missing → changed to defective-field** (was invalid-invoice), with a split: it is invalid-invoice only where the reverse-charge supply still shows a separate, reclaimable VAT amount (a buyer could wrongly claim it); where the invoice is gross-only with just the wording missing, it is defective-field — nothing is wrongly reclaimable and a gross-only figure is itself an obvious prompt to check the treatment.
+2. **Kept** — missing invoice number stays defective-field.
+3. **Customer name missing → changed to defective-field** (was invalid-invoice); name and address now graded the same. HMRC's test is who actually received the supply, the name is only prima facie evidence, and a £250-or-under receipt does not need a customer name at all (handled by classification). Research: ACCA and AccountingWEB, Sept 2026.
+4. **Kept** — missing net (pre-VAT) subtotal stays defective-field.
+5. **Margin-scheme wording missing → changed to the same split as item 1**: invalid-invoice only where a separate reclaimable VAT amount is shown; defective-field where the supply is gross-only with the wording missing.
+6. **Kept** — VAT that does not follow from the lines stays invalid-invoice.
+7. **Classification wording tidied** — a £250-or-under invoice is now always judged against the simplified particulars; the woolly "only escalate if the issuer clearly intended a full invoice" caveat is removed.
+
+Knock-on updates made in the same change: the severity table and classification wording in [rules.md](../rules.md); the reverse-charge worked audit in [examples.md](../examples.md) (now "defective particulars"); the reverse-charge row in [judge-answer-key/EXPECTED.md](../judge-answer-key/EXPECTED.md); dated notes on the two run receipts that pre-date this sign-off ([cold-walk.md](cold-walk.md), [batch-run.md](batch-run.md)); and [decisions.md](decisions.md).

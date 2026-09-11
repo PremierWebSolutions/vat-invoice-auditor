@@ -114,10 +114,12 @@ standard 20% rate, so there is no exempt or zero-rated line to distinguish [reg 
 [pass] Supplier particulars — name, address, VAT registration number GB 777 8888 99 [reg 14(1)(d)]
 [pass] Customer particulars — name and address present [reg 14(1)(e)]
 [pass] Description — "Groundworks at Plot 7, Mockton site — labour and materials", sufficient [reg 14(1)(g)]
-[invalid-invoice] VAT treatment wording — the invoice charges no VAT and says only
+[defective-field] VAT treatment wording — the invoice charges no VAT and says only
 "VAT not charged."; where the person supplied is liable to pay the tax the invoice must
-state the reference "reverse charge", and this one nowhere does — reissue stating
-"reverse charge" so the customer knows to account for the VAT [reg 14(1)(o)]
+state the reference "reverse charge", and this one nowhere does — correct on reissue so
+the customer is told in terms to account for the VAT. Graded defective, not invalid: the
+invoice shows no separate VAT amount (gross only), so there is nothing here a buyer could
+wrongly reclaim, which is the risk that would make a reverse-charge defect invalid [reg 14(1)(o)]
 [pass] Gross total payable excluding VAT — "£4,200.00" [reg 14(1)(i)]
 [pass] Unit price — £4,200.00 for the single agreed-schedule supply [reg 14(1)(m)]
 [pass] Margin scheme — ruled out: no antiques, art, collectors' items or tour-operator
@@ -128,7 +130,7 @@ Schedule 8 (free zones) [reg 14(1)(p)]
 construction supply, not an exempt or zero-rated one, so there is nothing to distinguish [reg 14(4)]
 ```
 
-**Arithmetic.** Single line, £4,200.00, no VAT charged — internally consistent with a reverse-charge treatment, which is exactly why the missing reference is dangerous: nothing on the face of the document tells the customer the VAT is theirs to account for.
+**Arithmetic.** Single line, £4,200.00, no VAT charged — internally consistent with a reverse-charge treatment. There is no separate VAT amount on the document, so nothing here could be wrongly reclaimed; the missing reference is a wording gap to correct, not a misstatement of the VAT.
 
 ```
 [pass] Arithmetic — totals recompute [reg 14(1)(h)]
@@ -136,4 +138,4 @@ construction supply, not an exempt or zero-rated one, so there is nothing to dis
 
 **Scope note.** HMRC's construction reverse-charge guidance (VAT Notice 735) recommends fuller wording, but that notice is not shipped in [reference/](reference/CATALOG.md) — so this audit cites only reg 14(1)(o) and says so, rather than citing from memory.
 
-**Verdict: NON-COMPLIANT — invalid invoice** — invalid-invoice: 1 · defective-field: 0 · advisory: 0 · passes: 12
+**Verdict: NON-COMPLIANT — defective particulars** — invalid-invoice: 0 · defective-field: 1 · advisory: 0 · passes: 12
