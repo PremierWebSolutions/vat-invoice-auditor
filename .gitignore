@@ -2,3 +2,11 @@
 __pycache__/
 *.pyc
 audits/
+
+# Real invoices dropped in for auditing stay on this machine — never commit
+# a client's document to a public repo. The folder's README and the shipped
+# SAMPLE- invoice are tracked; every other invoice you add is ignored,
+# whatever its format (.pdf, .md, .txt, ...).
+invoices/*
+!invoices/README.md
+!invoices/SAMPLE-*

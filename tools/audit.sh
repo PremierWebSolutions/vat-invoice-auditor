@@ -1,9 +1,13 @@
 #!/bin/sh
 # audit.sh — run the auditor from a terminal, without opening a chat.
 #
-#   ./tools/audit.sh fixtures/broken-vat-total-in-euros.md      one invoice
-#   ./tools/audit.sh fixtures/*.md                              a batch (rules.md §6)
-#   ./tools/audit.sh invoice.md > audits/2026-09-11-acme.md     keep the report
+#   ./tools/audit.sh invoices/acme.md                           one invoice
+#   ./tools/audit.sh invoices/*.md                              a batch (rules.md §6)
+#   ./tools/audit.sh invoices/*.md > audits/2026-09-11.md       keep the report
+#
+# Put the invoices you want checked in invoices/ (git-ignored). fixtures/
+# holds the ten synthetic test invoices — ./tools/audit.sh fixtures/*.md
+# runs the tool on those, to see it work before feeding it anything real.
 #
 # This is the auditor itself, so it does what the checkers in tools/ never
 # do: it calls Claude. It needs the Claude Code CLI installed and signed in

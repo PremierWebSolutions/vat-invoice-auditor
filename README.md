@@ -4,37 +4,50 @@ A drop-in folder that turns a Claude project into an auditor for UK VAT sales in
 
 The standard it enforces ships in the folder, verbatim and version-dated: regulations 13, 14, 16 and 16A of the Value Added Tax Regulations 1995 (SI 1995/2518) and sections 3 and 4 of HMRC's Record keeping notice (VAT Notice 700/21). See [reference/CATALOG.md](reference/CATALOG.md) for versions and access dates.
 
-## Try it in one command
+## Audit your own invoices
 
-You need the [Claude Code](https://claude.com/claude-code) command line installed and signed in, and nothing else. From this folder:
+You need the [Claude Code](https://claude.com/claude-code) command line installed and signed in, and nothing else.
+
+1. Put each invoice you want checked in the [invoices/](invoices/) folder. A PDF is fine (most supplier invoices are PDFs), and so is a plain text file (`.md` or `.txt`). The one exception is a PDF that's just a scan or photo of paper, with no real text in it; type those into a text file first.
+2. From this folder, run:
 
 ```bash
-./tools/audit.sh fixtures/broken-vat-total-in-euros.md
+./tools/audit.sh invoices/*.pdf
 ```
 
-That prints a full audit of a deliberately broken invoice; compare it with Example 2 in [examples.md](examples.md), which is the same invoice. A clean one, for contrast:
+Each invoice gets its own full audit, followed by a summary table. Everything you put in `invoices/` stays on your machine: that folder is git-ignored, so a real supplier's invoice is never committed to the repo. To keep a copy of the report, redirect it: `./tools/audit.sh invoices/*.pdf > audits/2026-09-11.md` (`audits/` is git-ignored too). A ready-made `SAMPLE-invoice.pdf` sits in the folder so you can try it before adding your own.
+
+## See it work first
+
+The tool ships with ten made-up test invoices in [fixtures/](fixtures/) so you can watch it run before feeding it anything real. A correct invoice:
 
 ```bash
 ./tools/audit.sh fixtures/compliant-full-invoice.md
 ```
 
-Several files at once are audited as a batch, one full audit each, then a summary table:
+One with a fault (a missing supplier VAT number):
+
+```bash
+./tools/audit.sh fixtures/broken-missing-vat-number.md
+```
+
+All ten at once, as a batch:
 
 ```bash
 ./tools/audit.sh fixtures/*.md
 ```
 
-To audit your own invoice, save its text as a `.md` or `.txt` file and pass the path. To keep the report, redirect it: `./tools/audit.sh invoice.md > audits/2026-09-11-supplier.md` (the `audits/` folder is git-ignored, so a report on a real supplier invoice can never be committed by accident).
+Compare any of these against [examples.md](examples.md), which walks three of them through by hand.
 
 ## Quick start in a chat
 
-**Claude Code:** open a terminal in this folder, run `claude`, and paste an invoice or name a file: `Audit fixtures/broken-vat-total-in-euros.md`. [CLAUDE.md](CLAUDE.md) wires the auditor up automatically, and if your first message isn't an audit request it replies with the one-line usage rather than doing anything else.
+**Claude Code:** open a terminal in this folder, run `claude`, and paste an invoice or name a file: `Audit invoices/that-invoice.md`. [CLAUDE.md](CLAUDE.md) wires the auditor up automatically, and if your first message isn't an audit request it replies with plain instructions rather than doing anything else.
 
 **claude.ai project:** create a project, upload this folder to project knowledge, and set the project instructions to: *"You are the auditor defined in identity.md. Follow it exactly."* Then paste an invoice.
 
 ## What to feed it
 
-One sales invoice at a time, as text: a pasted invoice body, a markdown file, or text extracted from a PDF. It audits the document in front of it. It does not need (and should not be given) your accounting records, customer lists, or anything else.
+One sales invoice at a time: a PDF, a markdown or text file, or an invoice pasted straight into the chat. It reads the text inside a PDF, so a software-produced invoice works as-is; only a scan or photo with no text layer needs typing out first. It audits the document in front of it. It does not need (and should not be given) your accounting records, customer lists, or anything else.
 
 What comes back: a classification (full, simplified or retailer invoice), a check-by-check walk with one citation per line, findings graded **invalid-invoice / defective-field / advisory**, explicit passes, and a one-line verdict with counts. The format is specified in [rules.md](rules.md) and demonstrated in [examples.md](examples.md).
 
