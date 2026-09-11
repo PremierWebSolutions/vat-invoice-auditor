@@ -4,19 +4,33 @@ A drop-in folder that turns a Claude project into an auditor for UK VAT sales in
 
 The standard it enforces ships in the folder, verbatim and version-dated: regulations 13, 14, 16 and 16A of the Value Added Tax Regulations 1995 (SI 1995/2518) and sections 3 and 4 of HMRC's Record keeping notice (VAT Notice 700/21). See [reference/CATALOG.md](reference/CATALOG.md) for versions and access dates.
 
-## Quick start
+## Try it in one command
 
-**Claude Code:** open a terminal in this folder and start a session. [CLAUDE.md](CLAUDE.md) wires the auditor up automatically. Then:
+You need the [Claude Code](https://claude.com/claude-code) command line installed and signed in, and nothing else. From this folder:
 
-> Audit this invoice: *(paste the invoice text, or give a file path)*
+```bash
+./tools/audit.sh fixtures/broken-vat-total-in-euros.md
+```
 
-**claude.ai project:** create a project, upload this folder to project knowledge, and set the project instructions to: *"You are the auditor defined in identity.md. Follow it exactly."*
+That prints a full audit of a deliberately broken invoice; compare it with Example 2 in [examples.md](examples.md), which is the same invoice. A clean one, for contrast:
 
-To see it work immediately, run it on one of the included test invoices:
+```bash
+./tools/audit.sh fixtures/compliant-full-invoice.md
+```
 
-> Audit fixtures/broken-vat-total-in-euros.md
+Several files at once are audited as a batch, one full audit each, then a summary table:
 
-and compare the output against [examples.md](examples.md).
+```bash
+./tools/audit.sh fixtures/*.md
+```
+
+To audit your own invoice, save its text as a `.md` or `.txt` file and pass the path. To keep the report, redirect it: `./tools/audit.sh invoice.md > audits/2026-09-11-supplier.md` (the `audits/` folder is git-ignored, so a report on a real supplier invoice can never be committed by accident).
+
+## Quick start in a chat
+
+**Claude Code:** open a terminal in this folder, run `claude`, and paste an invoice or name a file: `Audit fixtures/broken-vat-total-in-euros.md`. [CLAUDE.md](CLAUDE.md) wires the auditor up automatically, and if your first message isn't an audit request it replies with the one-line usage rather than doing anything else.
+
+**claude.ai project:** create a project, upload this folder to project knowledge, and set the project instructions to: *"You are the auditor defined in identity.md. Follow it exactly."* Then paste an invoice.
 
 ## What to feed it
 
@@ -32,7 +46,7 @@ For a stack of invoices, hand it the batch in one request:
 
 > Audit every invoice in *(folder, or paste them all)*, one full audit each, then the summary table.
 
-[rules.md §6](rules.md) governs what happens next: each invoice gets its complete audit, nothing found in one is allowed to colour another, and a summary table (verdict, counts, headline finding per invoice) comes last, as an index to the audits, never a substitute for them. Two checks only exist at batch level and are reported there: the same reference number on two documents, and one supplier carrying two different VAT registration numbers. Nothing is written to disk; the audits are the session's output, so copy what you need into your working papers.
+[rules.md §6](rules.md) governs what happens next: each invoice gets its complete audit, nothing found in one is allowed to colour another, and a summary table (verdict, counts, headline finding per invoice) comes last, as an index to the audits, never a substitute for them. Two checks only exist at batch level and are reported there: the same reference number on two documents, and one supplier carrying two different VAT registration numbers. In a chat, nothing is written to disk and the audits are the session's output, so copy what you need into your working papers; from the terminal, `./tools/audit.sh fixtures/*.md > audits/today.md` keeps the whole batch report in one git-ignored file.
 
 ## What it checks against, exactly
 
@@ -47,7 +61,8 @@ That is the entire standard. VAT liability, rates, exemption, input tax recovery
 
 | File | Role |
 |---|---|
-| [identity.md](identity.md) | Who the auditor is: the entry point |
+| [CLAUDE.md](CLAUDE.md) | What Claude Code loads first: routes to the auditor and answers a stray first message with the usage line |
+| [identity.md](identity.md) | Who the auditor is and what it enforces; where CLAUDE.md sends every audit |
 | [rules.md](rules.md) | Audit order, citation grammar, severity table, verdicts |
 | [examples.md](examples.md) | Three worked audits showing the exact expected output |
 | [reference/](reference/CATALOG.md) | The standard itself, verbatim and version-dated, one card per provision |
@@ -56,7 +71,8 @@ That is the entire standard. VAT liability, rates, exemption, input tax recovery
 | [tools/check_arithmetic.py](tools/check_arithmetic.py) | Offline checker: every fixture's net/VAT/total arithmetic is recomputed from its own numbers |
 | [tools/check_no_network.py](tools/check_no_network.py) | Offline checker: proves the checkers above make no network, subprocess or hosted-LLM call |
 | [tools/check_reference_integrity.py](tools/check_reference_integrity.py) | Offline checker: every reference/ file matches its recorded SHA-256 ([reference/MANIFEST.md](reference/MANIFEST.md)) |
-| [tools/check_freshness.sh](tools/check_freshness.sh) | The one script that touches the network: checks each vendored standard against its live source (not run in CI; see below) |
+| [tools/check_freshness.sh](tools/check_freshness.sh) | The one checker that touches the network: tests each vendored standard against its live source (not run in CI; see below) |
+| [tools/audit.sh](tools/audit.sh) | The runner: audits one file or a batch from the terminal by calling the Claude CLI |
 
 The drop-in unit is the five things above the line: identity, rules, examples, reference, and the fixtures as plain invoice text. **The answer key is not in that folder.** It lives in [judge-answer-key/](judge-answer-key/EXPECTED.md), a sibling directory the auditor is never pointed at and a real production setup never uploads, separated by folder position, not by an instruction the auditor is trusted to police itself. Do not load the whole repo into context for an audit either way: the auditor reads [reference/CATALOG.md](reference/CATALOG.md) and opens only the card the invoice in front of it needs; a full invoice needs reg 14 and one notice section, nothing more. If you set the folder up for real production use rather than testing, leave `fixtures/`, `judge-answer-key/`, `tools/` and `docs/` out entirely; they exist to test and evidence the auditor, not to audit anything.
 
@@ -84,7 +100,7 @@ python3 tools/check_reference_integrity.py --self-test
 
 All eight runs (four checks, four self-tests) run in CI on every push ([.github/workflows/check.yml](.github/workflows/check.yml)).
 
-A fifth script, [tools/check_freshness.sh](tools/check_freshness.sh), deliberately sits outside that guarantee: it fetches each source URL live and greps for a canary phrase from the vendored text, to catch the standard itself moving. It is the one part of this repo that touches the network, which is exactly why it does not run in CI: run it by hand before relying on this auditor for anything that matters, and periodically after that.
+A fifth script, [tools/check_freshness.sh](tools/check_freshness.sh), deliberately sits outside that guarantee: it fetches each source URL live and greps for a canary phrase from the vendored text, to catch the standard itself moving. It is the one checker that touches the network, which is exactly why it does not run in CI: run it by hand before relying on this auditor for anything that matters, and periodically after that. ([tools/audit.sh](tools/audit.sh) also reaches the network, because it calls Claude; it is the auditor, not a check on it.)
 
 ## The standard's version pin
 
